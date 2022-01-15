@@ -1,0 +1,11 @@
+Change Log
+==========
+
+0.0.1 (14/01/2022)
+-------------------
+- First Release
+
+0.0.2 (14/01/2022)
+-------------------
+- Restructuring Files
+- Add endpoint_for
