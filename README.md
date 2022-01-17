@@ -51,16 +51,15 @@ And that's it for V0.2!
 ## Just a small notice
 Imagine this scenario for a minute...:
 
-> I make a Library
-> Someone Tells me, how much it sucks
-> They clone it and send their Code to me saying they "fixed" it
-> After taking a look, the only change I notice is that they changed the function's docstrings
-> They release it anyways to a server
-> people believe them and credit them even though they just stole my code.
+> I make a Library  
+> Someone Tells me, how much it sucks  
+> They clone it and send their Code to me saying they "fixed" it  
+> After taking a look, the only change I notice is that they changed the function's docstrings  
+> They release it anyways to a server  
+> people believe them and credit them even though they just stole my code.  
+If someone did that, Developers would tear them apart, eh?   
 
-If someone did that, the Internet would tear them apart, eh? 
-
-Nobody would actually allow them to get away with this, correct?
+Nobody would actually allow them to get away with this, correct? 
 
 *Correct?*
 
