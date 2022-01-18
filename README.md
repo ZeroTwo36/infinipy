@@ -48,32 +48,52 @@ async def iblinfo(ctx,_Id):
 
 And that's it for V0.2!
 
-## Just a small notice
-Imagine this scenario for a minute...:
+## Update Bot Stats
+Okay, you want everybody to see how cool your Bot is. That's great!  
+In V0.3, I have added APISessions to do exactly that!  
 
-> I make a Library  
-> Someone Tells me, how much it sucks  
-> They clone it and send their Code to me saying they "fixed" it  
-> After taking a look, the only change I notice is that they changed the function's docstrings  
-> They release it anyways to a server  
-> people believe them and credit them even though they just stole my code.  
-If someone did that, Developers would tear them apart, eh?   
+Whether you're using a script to just post stats there, or want to real-time update your Bot's Statistics on IBL, I gotcha!  
 
-Nobody would actually allow them to get away with this, correct? 
+For simple Scripts, I recommend to use the **SyncAPISession Class**:
 
-*Correct?*
+In theory, usage would look like this:
+```py
+from infinipy import SyncAPISession
 
-***Correct?***
+api = SyncAPISession("api_key")
+api.postStats(discordbot)
+```  
 
-...well...
+While in a script, it could look something like this:
+```py
+from infinipy import SyncAPISession
+from dotenv import load_dotenv
+import os
+from discordbot import botclient
 
-It's already happened twice since the initial release that people took my code and reuploaded it with 0 Changes (Maybe modified a docstring)  
-*And people accept it.* They don't tear the Guy, whose name I will respectfully not reveal here, apart, they chose to attack me and how much my code sucks
+load_dotenv()
 
-Listen. **I know my code sucks.** That doesn't mean that if someone clones it, it's suddenly better.  
-You *can* create pull requests and improve my code. I would actually be happy about that.  
-What I am *not* happy with, is people taking my Code and claiming it to be theirs.  
+api = SyncAPISession(os.environ.get("ibl_api_key"))
+api.postStats(botclient)
+```
 
-If you've read up until here, Thanks. I will propably move this part to a seperate gist later on.
+Async is the same, but postStats must be *await*ed.   
+This is recommended to post real-time stats, like this:  
+```py
+from infinipy import AsyncAPISession
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
+@bot.event
+async def on_guild_join(guild):
+  api = AsyncAPISession(os.environ.get("ibl_api_key"))
+  api.postStats(bot)
+```
+Note, that on both Classes you can get the API's response like this:  
+```py
+response = api.session["UPDATE_RESPONSE"]
+print(response)
+```
+Hope to see you soon!  
 ~ ZeroTwo36
