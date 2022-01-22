@@ -2,12 +2,13 @@ import json
 from .errors import RequestFailed, InfinipyBaseException
 import aiohttp
 import requests
-from .constants import *
 import typing as t
 
-class Session:
-    def __init__(self):
-        self = {}
+__version_info__ = "0.3"
+
+class Session(dict):
+    def __init_subclass__(cls) -> None:
+        return super().__init_subclass__()
 
 class User:
     def __init__(self,id,nickname:str,about:str,certified_dev:bool,developer:bool,staff:bool,links):
@@ -39,40 +40,34 @@ class Bot:
 
     @property
     def stats(this):
-        return _requestHandle(f'/bots/{this.id}')
+        return vars(this)
 
-
-
+        
 class AsyncAPISession:
     def __init__(self,api_token):
         self.token = api_token
         self.session = Session()
 
-    async def _post(self,endpoint,authorize,predef_headers,jsonlib):
+    async def _post(self,endpoint,authorize,predef_headers,jsondata):
         async with aiohttp.ClientSession() as cs:
             if not predef_headers:
                 headers = {
-                    'User-Agent':f'Infpy:{__version_info__}'
+                    'User-Agent':f'Infpy/{__version_info__}'
                 }
                 if not not authorize:
                     headers['authorization'] = self.token
             else:
                 headers = predef_headers
-            resp = await cs.post(f'https://api.infinitybotlist.com/{endpoint}',headers=headers,json=jsonlib)
+            resp = await cs.post(f'https://api.infinitybotlist.com/{endpoint}',headers=headers,json=jsondata)
             resp.raise_for_status()
             return await resp.json()
 
-    async def postStats(self,DiscordHTTPClient):
-        if hasattr(DiscordHTTPClient, 'shard_count'):
-            shards = DiscordHTTPClient.shard_cound
-        else:
-            shards = 0
-        servers = len(DiscordHTTPClient.guilds)
+    async def postStats(self,shards:int=0,servers:int=0):
         data = {
             'servers':servers,
             'shards':shards
         }
-        resp = await self._post('/bots/stats',True,None,data)
+        resp = await self._post('bots/stats',jsondata=data)
         self.session['UPDATE_RESPONSE'] = resp
 
 class SyncAPISession:
@@ -80,31 +75,28 @@ class SyncAPISession:
         self.token = api_token
         self.session = Session()
 
-    def _post(self,endpoint,authorize,predef_headers,jsonlib):
+    def _post(self,endpoint,authorize:bool=True,predef_headers:dict=None,jsondata:dict={}):
         
             if not predef_headers:
                 headers = {
-                    'User-Agent':f'Infpy:{__version_info__}'
+                    'User-Agent':f'Infpy/{__version_info__}',
+                    "Content-Type": "application/json"
                 }
                 if not not authorize:
-                    headers['authorization'] = self.token
+                    headers['Authorization'] = self.token
             else:
                 headers = predef_headers
-            resp = requests.post(f'https://api.infinitybotlist.com/{endpoint}',headers=headers,json=jsonlib)
+            print(headers)
+            resp = requests.post(f'https://api.infinitybotlist.com/{endpoint}',headers=headers,json=jsondata)
             resp.raise_for_status()
             return resp.json()
 
-    def postStats(self,DiscordHTTPClient):
-        if hasattr(DiscordHTTPClient, 'shard_count'):
-            shards = DiscordHTTPClient.shard_cound
-        else:
-            shards = 0
-        servers = len(DiscordHTTPClient.guilds)
+    def postStats(self,shards:int=0,servers:int=0):
         data = {
             'servers':servers,
             'shards':shards
         }
-        resp = self._post('/bots/stats',True,None,data)
+        resp = self._post('bots/stats',jsondata=data)
         self.session['UPDATE_RESPONSE'] = resp
 
 
