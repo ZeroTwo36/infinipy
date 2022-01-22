@@ -61,7 +61,7 @@ In theory, usage would look like this:
 from infinipy import SyncAPISession
 
 api = SyncAPISession("api_key")
-api.postStats(discordbot)
+api.postStats(shard_count, server_count)
 ```  
 
 While in a script, it could look something like this:
@@ -74,7 +74,7 @@ from discordbot import botclient
 load_dotenv()
 
 api = SyncAPISession(os.environ.get("ibl_api_key"))
-api.postStats(botclient)
+api.postStats(bot.shards,len(bot.guilds))
 ```
 
 Async is the same, but postStats must be *await*ed.   
@@ -88,7 +88,7 @@ load_dotenv()
 @bot.event
 async def on_guild_join(guild):
   api = AsyncAPISession(os.environ.get("ibl_api_key"))
-  api.postStats(bot)
+  await api.postStats(bot.shards,len(bot.guilds))
 ```
 Note, that on both Classes you can get the API's response like this:  
 ```py
