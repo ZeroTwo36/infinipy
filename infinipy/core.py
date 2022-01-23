@@ -2,13 +2,12 @@ import json
 from .errors import RequestFailed, InfinipyBaseException
 import aiohttp
 import requests
+from .constants import *
 import typing as t
 
-__version_info__ = "0.3"
-
-class Session(dict):
-    def __init_subclass__(cls) -> None:
-        return super().__init_subclass__()
+class Session:
+    def __init__(self):
+        self = {}
 
 class User:
     def __init__(self,id,nickname:str,about:str,certified_dev:bool,developer:bool,staff:bool,links):
@@ -41,6 +40,15 @@ class Bot:
     @property
     def stats(this):
         return vars(this)
+
+    def hasUserVoted(self,user):
+        resp = requests.get(f"https://api.infinitybotlist.com/votes/{self.id}/{user}")
+
+        resp.raise_for_status()
+        json = resp.json()
+        return not not json['hasVoted']
+
+
 
         
 class AsyncAPISession:
@@ -115,7 +123,7 @@ async def fetch_bot(id):
 
     return Bot(id,**json)
     
-def fetch_bot_sync(id):
+def fetchBotSync(id):
     resp = requests.get(f"https://api.infinitybotlist.com/bots/{id}")
 
 
@@ -127,7 +135,7 @@ def fetch_bot_sync(id):
     return Bot(id,**json)
 
 
-async def fetch_user(id):
+async def fetchUser(id):
     async with aiohttp.ClientSession() as cs:
         resp = await cs.get(f"https://api.infinitybotlist.com/user/{id}")
 
@@ -138,7 +146,7 @@ async def fetch_user(id):
 
     return User(id,**json)
 
-def fetch_user_sync(id):
+def fetchUserSync(id):
     resp = requests.get(f"https://api.infinitybotlist.com/user/{id}")
 
     if resp.status_code>=400 :
@@ -149,21 +157,3 @@ def fetch_user_sync(id):
 
     return User(id,**json)
 
-async def has_voted(user,bot_for):
-    
-    async with aiohttp.ClientSession() as cs:
-        resp = await cs.get(f"https://api.infinitybotlist.com/votes/{bot_for}/{user}")
-
-    resp.raise_for_status()
-    json = await resp.json()
-    return not not json['hasVoted']
-
-def has_voted_sync(user,bot_for):
-    resp = requests.get(f"https://api.infinitybotlist.com/votes/{bot_for}/{user}")
-
-    resp.raise_for_status()
-    json = resp.json()
-    return not not json['hasVoted']
-
-
-    
