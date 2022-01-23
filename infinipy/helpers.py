@@ -4,6 +4,7 @@ import time
 import threading
 
 
+
 class AutoStatsUpdater:
     def __init__(self,bot,api_key, interval:int=120) -> None:
         """Automatically pushes a discord.py bot's stats to the API.
@@ -12,7 +13,7 @@ class AutoStatsUpdater:
         2 Minutes
         
         Keyword arguments:
-        :param: bot -- discord.Client | discord.ext.commands.Bot | infinipy.core.Bot
+        :param: bot -- discord.Client | discord.ext.commands.Bot
         :param: api_key -- str
         :param: interval -- int | amount of time a post takes
         
@@ -33,7 +34,11 @@ class AutoStatsUpdater:
 
     def __start__(self):
         while True:
-            self.session.postStats(self.bot)
+            if hasattr(self.bot,'shard_count'):
+                shards = self.bot.shard_count
+            else:
+                shards = 0
+            self.session.postStats(shards,len(self.bot.guilds))
             print("[+] A Post was made")
             time.sleep(self.interval)
     
@@ -45,13 +50,13 @@ class APISession:
 
     def fetch(self):
         if self.endpoint.startswith("/bots"):
-            return fetch_bot_sync(self.id)
-        return fetch_user_sync(self.id)
+            return fetchBotSync(self.id)
+        return fetchUserSync(self.id)
 
 def endpoint_for(user_id):
     """Determines whether an ID belongs to the /user or to /bots endpoint
     """
-    error = fetch_bot_sync(user_id)
-    if isinstance(error,RequestFailed):
-            return f'/user/{user_id}'
-    return f'/bots/{user_id}'
+    req = requests.get(f"https://japi.rest/discord/v1/user/{user_id}").json()
+    if "bot" in req and req["bot"] == True:
+            return f'/bots/{user_id}'
+    return f'/user/{user_id}'
