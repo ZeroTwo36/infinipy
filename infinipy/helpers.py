@@ -51,14 +51,20 @@ class APISession:
         self.endpoint = endpoint_for(self.id)
 
     def fetch(self):
-        if self.endpoint.startswith("/bots"):
-            return fetchBotSync(self.id)
-        return fetchUserSync(self.id)
+        try:
+            bot = fetchBotSync(self.id)
+            print(bot.lib)
+            return bot
+        except:
+            return fetchUserSync(self.id)
 
 def endpoint_for(user_id):
     """Determines whether an ID belongs to the /user or to /bots endpoint
     """
     req = requests.get(f"https://japi.rest/discord/v1/user/{user_id}").json()
-    if "bot" in req and req["bot"] == True:
+    try:
+        bot = req['bot']
+        if "bot" in req:
             return f'/bots/{user_id}'
-    return f'/user/{user_id}'
+    except KeyError:
+        return f'/user/{user_id}'
