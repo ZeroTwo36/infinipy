@@ -2,7 +2,7 @@ import imp
 from .core import *
 import time
 import threading
-
+from .errors import BaseError, TooManyRequests
 
 
 class AutoStatsUpdater:
@@ -21,8 +21,10 @@ class AutoStatsUpdater:
         
         """
 
-        assert interval >= 120, 'Interval must be atleast 120 Seconds due to ratelimiting Issues'
-
+        # assert interval >= 120, 'Interval must be atleast 120 Seconds due to ratelimiting Issues'
+        if(interval < 120):
+            print(TooManyRequests('Interval must be atleast 120 Seconds due to ratelimiting Issues'))
+            return
         self.key = api_key
         self.bot = bot
         self.session = SyncAPISession(self.key)
