@@ -112,7 +112,7 @@ class SyncAPISession:
 def _requestHandle(endpoint):
     return json.loads(requests.get(f'https://api.infinitybotlist.com{endpoint}').text)
     
-async def fetch_bot(id):
+async def fetchBot(id):
     async with aiohttp.ClientSession() as cs:
         resp = await cs.get(f"https://api.infinitybotlist.com/bots/{id}")
 
@@ -157,3 +157,14 @@ def fetchUserSync(id):
 
     return User(id,**json)
 
+async def has_voted(user,bot_for):
+    
+    async with aiohttp.ClientSession() as cs:
+        resp = await cs.get(f"https://api.infinitybotlist.com/votes/{bot_for}/{user}")
+
+    resp.raise_for_status()
+    json = await resp.json()
+    return not not json['hasVoted']
+
+
+    
