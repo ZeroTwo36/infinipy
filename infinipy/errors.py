@@ -20,3 +20,6 @@ class BaseError:
 class TooManyRequests(BaseError):
     def __init__(self,details):
         super().__init__(420,'Enhance your Calm!',details)
+
+class PrecaughtHttpStatusError(InfinipyBaseException):
+    """Run a .check() for every HTTP Request to check if it's even possible"""
