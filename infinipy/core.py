@@ -4,10 +4,10 @@ import aiohttp
 import requests
 from .constants import *
 import typing as t
+import multidict
 
-class Session:
-    def __init__(self):
-        self = {}
+__version_info__ = "pre-stable 0.3"
+
 
 class User:
     def __init__(self,id,nickname:str,about:str,certified_dev:bool,developer:bool,staff:bool,links):
@@ -54,7 +54,7 @@ class Bot:
 class AsyncAPISession:
     def __init__(self,api_token):
         self.token = api_token
-        self.session = Session()
+        self.session = multidict.MultiDict()
 
     async def _post(self,endpoint,authorize,predef_headers,jsondata):
         async with aiohttp.ClientSession() as cs:
@@ -81,7 +81,8 @@ class AsyncAPISession:
 class SyncAPISession:
     def __init__(self,api_token):
         self.token = api_token
-        self.session = Session()
+        self.session = multidict.MultiDict()
+        
 
     def _post(self,endpoint,authorize:bool=True,predef_headers:dict=None,jsondata:dict={}):
         
