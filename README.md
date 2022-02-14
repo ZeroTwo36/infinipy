@@ -18,7 +18,7 @@ bot = infinipy.fetchBotSync(BOT_ID) # Will return infinipy.core.Bot()
 ### Examples:
 ```py
 print("Bot Stats:")
-print("Votes: "+str(bot.analytica['votes']
+print("Votes: "+str(bot.analytica['votes'])
 print("User Stats:")
 print("Nick: " + user.name + "\nBio: "+ user.about) 
 ```
@@ -95,5 +95,19 @@ Note, that on both Classes you can get the API's response like this:
 response = api.session["UPDATE_RESPONSE"]
 print(response)
 ```
+
+### Adding an AutoPoster because I'm bored
+AutoPosters update the Bot's statistics every so and so seconds, kinda like this:  
+
+```py
+from infinipy.helpers import AutoStatsUpdater
+from mycoolbot import bot # Your Bot instance
+
+interval = 120 # Must be >= 120
+
+poster = AutoStatsUpdater(bot,"API_KEY_HERE",interval)
+poster.start()
+```
+
 Hope to see you soon!  
 ~ ZeroTwo36
