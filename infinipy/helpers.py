@@ -2,7 +2,7 @@ import imp
 from .core import *
 import time
 import threading
-from .errors import BaseError, TooManyRequests
+from .errors import BaseError, PrecaughtHttpStatusError, TooManyRequests
 
 
 class AutoStatsUpdater:
@@ -17,14 +17,32 @@ class AutoStatsUpdater:
         :param: api_key -- str
         :param: interval -- int | amount of time a post takes
         
-        .. :warn: INTERVAL MUST BE ATLEAST 120 OR ELSE YOU'LL BE RATELIMITED
+        .. :warn: If Interval is LESS than 120, you're gonna run into a Ratelimit :|
         
         """
 
-        # assert interval >= 120, 'Interval must be atleast 120 Seconds due to ratelimiting Issues'
         if(interval < 120):
-            print(TooManyRequests('Interval must be atleast 120 Seconds due to ratelimiting Issues'))
-            return
+            raise PrecaughtHttpStatusError(f'''
+        W                             
+       WWW          
+       WWW          
+      WWWWW         
+W     WWWWW     W   
+WWW   WWWWW   WWW   
+ WWW  WWWWW  WWW    
+  WWW  WWW  WWW     
+   WWW WWW WWW      
+     WWWWWWW        
+  WWWW  |  WWWW     
+        |           
+        |
+    HTTP Error 420
+  Enhance your calm
+You will be ratelimited.
+Please set the interval to 120 or more
+            ''')
+
+
         self.key = api_key
         self.bot = bot
         self.session = SyncAPISession(self.key)
@@ -51,20 +69,14 @@ class APISession:
         self.endpoint = endpoint_for(self.id)
 
     def fetch(self):
-        try:
-            bot = fetchBotSync(self.id)
-            print(bot.lib)
-            return bot
-        except:
-            return fetchUserSync(self.id)
+        if self.endpoint.startswith("/bots"):
+            return fetchBotSync(self.id)
+        return fetchUserSync(self.id)
 
 def endpoint_for(user_id):
     """Determines whether an ID belongs to the /user or to /bots endpoint
     """
     req = requests.get(f"https://japi.rest/discord/v1/user/{user_id}").json()
-    try:
-        bot = req['bot']
-        if "bot" in req:
-            return f'/bots/{user_id}'
-    except KeyError:
-        return f'/user/{user_id}'
+    if "bot" in req["data"] and req["data"]["bot"] == True:
+        return f'/bots/{user_id}'
+    return f'/user/{user_id}'
