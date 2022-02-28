@@ -1,7 +1,7 @@
 # infinipy
 
 ## Okay, hear me out:
-I know about ibl.py. I made this Library out of boredom, pretty much.
+I know about IBLPy. I made this Library out of boredom, pretty much.
 
 PLUS: InfiniPy has some neat features - like the endpoint_for function.
 
