@@ -5,6 +5,7 @@ import requests
 from .constants import __version_info__
 import typing as t
 import multidict
+from .webhooks import WebHook
 
 class Session(multidict.CIMultiDict):
     def __init__(self,**kwds):
@@ -51,9 +52,32 @@ class Bot(BaseUser):
         json = resp.json()
         return not not json['hasVoted']
 
-
-
+    
+    def webhook(self,**args):
+        """
+        The webhook function is a decorator that registers a function as an endpoint for webhooks. 
+        The decorated function will be called when the specified route is hit with the specified secret.
+        If no host or port are provided, they default to 0.0.0.0 and 2184 respectively.
         
+        :param self: Used to access the class variables.
+        :param **args: Used to pass in the parameters that are used to configure the webhook.
+        :return: a function that accepts a function.
+        """
+        
+        def predicate(func):
+            """
+            The predicate function is a function that returns True or False.
+            The predicate function is passed to the filter() method as an argument.
+            The filter() method calls the predicate function for each element of the iterable object and returns only those elements for which the corresponding predicate call returned True.
+            
+            :param func: Used to pass the function that is being decorated.
+            :return: the result of the function call.
+            
+            """
+            return WebHook(self,args.get("secret"),func,args.get("host","0.0.0.0"),args.get("port",2184),args.get("route","/hook"))
+
+        return predicate
+
 class AsyncAPISession:
     def __init__(self,api_token):
         self.token = api_token
