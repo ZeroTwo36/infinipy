@@ -109,5 +109,41 @@ poster = AutoStatsUpdater(bot,"API_KEY_HERE",interval)
 poster.start()
 ```
 
+### Adding WebHooks and hoping it works
+Hey! It's been a while, but I'm back with new, exciting Features for V0.3! **Webhooks!**  
+Basically, a Webhook is triggered whenever a Vote is fired. Then a POST-Request to the Webhook will be made  
+
+I used FLASK for the WebHooks. You implement them like so:
+
+```py
+from infinipy.webhooks import webhook
+from infinipy import fetchBotSync
+
+bot = fetchBotSync(909882795768315986)
+
+@webhook(ibl=bot,secret="supersecret",route="/onvote")
+def on_vote(request,hook):
+  print("Vote fired!")
+  
+on_vote.listen()
+```
+
+Or:
+
+```py
+from infinipy import fetchBotSync
+
+bot = fetchBotSync(909882795768315986)
+@bot.webhook(secret="supersecret",route="/onvote")
+def on_vote(request,hook):
+  print("Vote fired!")
+  
+on_vote.listen()
+```
+
+This will print "Vote fired!" on your screen whenever a Vote is fired.
+
+*This Feature took me insanely long to make. I hope you like it*
+
 Hope to see you soon!  
 ~ ZeroTwo36
