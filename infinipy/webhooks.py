@@ -3,11 +3,12 @@ import requests
 import json
 from .errors import WebhookFailure
 from threading import Thread
+from flask_cors import CORS
 
 class WebHook(object):
     flask = Flask('')
     route = "/hook"
-    def __init__(self,iblclient,secret,handler,host,port,route="/hook"):
+    def __init__(self,iblclient,secret,handler,host,port,route="/hook",enable_cors=False):
         self.ibl = iblclient
         self.secret = secret
         self.handler = handler
@@ -15,6 +16,8 @@ class WebHook(object):
         self.port = port
         self.route = route
         self.flask = Flask('')
+        if enable_cors:
+            CORS(self.flask)
 
     @flask.route(route,methods=['GET', 'POST'])
     def _handle(self):
@@ -29,6 +32,7 @@ class WebHook(object):
             return self.handler(request, self)
         
         error = WebhookFailure(400,"Webhook Secret doesn't Match")
+        print(error)
         return json.dumps({"error":str(error),"fatal":True})
 
     def listen(self):
