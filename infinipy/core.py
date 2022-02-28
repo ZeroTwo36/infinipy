@@ -1,44 +1,47 @@
-import json
+import json as json
 from .errors import RequestFailed, InfinipyBaseException
 import aiohttp
 import requests
-from .constants import *
+from .constants import __version_info__
 import typing as t
 import multidict
 
-__version_info__ = "pre-stable 0.3"
+class Session(multidict.CIMultiDict):
+    def __init__(self,**kwds):
+        super().__init__(kwds)
 
-
-class User:
-    def __init__(self,id,nickname:str,about:str,certified_dev:bool,developer:bool,staff:bool,links):
-        self.id = id
-        self.name = nickname
-        self.about = about
-        self.certified = certified_dev
-        self.dev_status = developer
-        self.staff_status = staff
-        self.website = links.get('website')
-        self.github = links.get('github')
-
-class Bot:
-    def __init__(self,id,name,tags,prefix,owner,additional_owners,short,long,library,nsfw,programs,analytics,links,**other):
+class BaseUser:
+    def __init__(self,id,links,name,**kwargs):
         self.id = id
         self.name = name
-        self.tags = tags.split(",")
-        self.prefix = prefix
-        self.owner = owner
-        self.additional_owners = additional_owners
-        self.short = short
-        self.long = long
-        self.lib = library
-        self.nsfw = not not nsfw
-        self.programs = programs
-        self.analytica = analytics
         self.links = links
-        self.other = other
+        self.website = links.get('website')
+        self.github = links.get('github')
+        for k in list(kwargs.keys()):
+            self.__setattr__(k,kwargs.get(k))
+
+class User(BaseUser):
+    def __init__(self,id,nickname:str,about:str,certified_dev:bool,developer:bool,staff:bool,links):
+        super().__init__(id,links,nickname,about=about,certified_dev=certified_dev,developer=developer,staff=staff)
+    
+    @property
+    def jsonify(this):
+        return vars(this)
+
+    def hasVotedFor(self,bot):
+        resp = requests.get(f"https://api.infinitybotlist.com/votes/{bot}/{self.id}")
+
+        resp.raise_for_status()
+        json = resp.json()
+        return not not json['hasVoted']
+
+
+class Bot(BaseUser):
+    def __init__(self,id,name,tags,prefix,owner,additional_owners,short,long,library,nsfw,programs,analytics,links,**other):
+        super().__init__(id,links,name,prefix=prefix,owner=owner,additional_owners=additional_owners,short=short,long=long,library=library,nsfw=nsfw,programs=programs,tags=tags.split(","),analytica=analytics,**other)
 
     @property
-    def stats(this):
+    def jsonify(this):
         return vars(this)
 
     def hasUserVoted(self,user):
@@ -54,7 +57,7 @@ class Bot:
 class AsyncAPISession:
     def __init__(self,api_token):
         self.token = api_token
-        self.session = multidict.MultiDict()
+        self.session = Session()
 
     async def _post(self,endpoint,authorize,predef_headers,jsondata):
         async with aiohttp.ClientSession() as cs:
@@ -81,8 +84,7 @@ class AsyncAPISession:
 class SyncAPISession:
     def __init__(self,api_token):
         self.token = api_token
-        self.session = multidict.MultiDict()
-        
+        self.session = Session()
 
     def _post(self,endpoint,authorize:bool=True,predef_headers:dict=None,jsondata:dict={}):
         
@@ -163,6 +165,7 @@ async def has_voted(user,bot_for):
     async with aiohttp.ClientSession() as cs:
         resp = await cs.get(f"https://api.infinitybotlist.com/votes/{bot_for}/{user}")
 
+        
     resp.raise_for_status()
     json = await resp.json()
     return not not json['hasVoted']
