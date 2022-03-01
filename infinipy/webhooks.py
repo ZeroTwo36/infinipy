@@ -1,4 +1,4 @@
-from infpy import hookHTTP
+from infinipy import hookHTTP
 
 
 class WebHook(object):
