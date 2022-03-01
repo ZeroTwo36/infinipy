@@ -159,9 +159,5 @@ No, InfiniPy is not perfect. I will not change too much from now on
 
 For the next time, maybe expect some Patches, but no new Features...
 
-This will print "Vote fired!" on your screen whenever a Vote is fired.
-
-*This Feature took me insanely long to make. I hope you like it*
-
 Hope to see you soon!  
 ~ ZeroTwo36
