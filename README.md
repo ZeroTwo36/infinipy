@@ -141,6 +141,24 @@ def on_vote(request,hook):
 on_vote.listen()
 ```
 
+
+### Webhooks: For once and for good
+
+```py
+from infinipy.webhooks import Webhook
+
+wh = Webhook(bot,"SECRET_KEY",port=1234)
+wh()
+```
+
+### Goodbye to you, dear InfiniPy...
+#### It's the end of the story, for now...
+
+No, InfiniPy is not perfect. I will not change too much from now on  
+**unless** IBL's API changes.  
+
+For the next time, maybe expect some Patches, but no new Features...
+
 This will print "Vote fired!" on your screen whenever a Vote is fired.
 
 *This Feature took me insanely long to make. I hope you like it*
