@@ -38,7 +38,7 @@ WWW   WWWWW   WWW
         |
     HTTP Error 420
   Enhance your calm
-You will be ratelimited.
+Thou shalt not be RateLimited.
 Please set the interval to 120 or more
             ''')
 
@@ -62,17 +62,6 @@ Please set the interval to 120 or more
             print("[+] A Post was made")
             time.sleep(self.interval)
     
-
-class APISession:
-    def __init__(self,id):
-        self.id = id
-        self.endpoint = endpoint_for(self.id)
-
-    def fetch(self):
-        if self.endpoint.startswith("/bots"):
-            return fetchBotSync(self.id)
-        return fetchUserSync(self.id)
-
 def endpoint_for(user_id):
     """Determines whether an ID belongs to the /user or to /bots endpoint
     """

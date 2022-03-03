@@ -1,11 +1,28 @@
 Change Log
 ==========
 
-0.0.1 (14/01/2022)
+0.1 (14/01/2022)
 -------------------
 - First Release
 
-0.0.2 (14/01/2022)
+0.2 (14/01/2022)
 -------------------
 - Restructuring Files
 - Add endpoint_for
+
+0.3.1 (16/01/2022)
+-------------------
+- Add SyncAPISession
+- Add AsyncAPISession
+- Add AutoStatsUpdater
+
+0.3.2 (01/03/2022)
+-------------------
+- Add Webhooks
+0.3.2.2 (02/03/2022)
+-------------------
+- Fix Webhooks
+0.3.2 Patch #1 (03/03/2022)
+-------------------
+- Patch out some Errors
+- Add Better Function Documentations

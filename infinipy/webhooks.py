@@ -14,5 +14,5 @@ class WebHook(object):
     def create_app(self):
         hookHTTP.router.run("0.0.0.0", self.port)
 
-    def __call__(self, *args, **kwds):
+    def __call__(self, *, require_cors=False):
         self.create_app()

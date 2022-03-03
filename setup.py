@@ -12,7 +12,8 @@ setup(
   name='infinipy',
   version='0.0.2',
   description='A very basic API Wrapper around IBL\'s API',
-  long_description=open('README.txt').read() + '\n\n' + open('CHANGELOG.txt').read(),
+  long_description=open('README.md').read(),
+  long_description_content_type="text/markdown",
   url='',  
   author='ZeroTwo36',
   author_email='zerotwo36@protonmail.com',
@@ -20,5 +21,5 @@ setup(
   classifiers=classifiers,
   keywords=['ibl','infinipy','infinity','dbl','discord','discord-botlist'], 
   packages=find_packages(),
-  install_requires=[''] 
+  install_requires=['requests','aiohttp','flask'] 
 )

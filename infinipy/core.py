@@ -43,6 +43,9 @@ class Bot(BaseUser):
 
     @property
     def jsonify(this):
+        """
+        Returns the Classes Variables as JSON/Dicts
+        """
         return vars(this)
 
     def hasUserVoted(self,user):
@@ -53,30 +56,6 @@ class Bot(BaseUser):
         return not not json['hasVoted']
 
     
-    def webhook(self,**args):
-        """
-        The webhook function is a decorator that registers a function as an endpoint for webhooks. 
-        The decorated function will be called when the specified route is hit with the specified secret.
-        If no host or port are provided, they default to 0.0.0.0 and 2184 respectively.
-        
-        :param self: Used to access the class variables.
-        :param **args: Used to pass in the parameters that are used to configure the webhook.
-        :return: a function that accepts a function.
-        """
-        
-        def predicate(func):
-            """
-            The predicate function is a function that returns True or False.
-            The predicate function is passed to the filter() method as an argument.
-            The filter() method calls the predicate function for each element of the iterable object and returns only those elements for which the corresponding predicate call returned True.
-            
-            :param func: Used to pass the function that is being decorated.
-            :return: the result of the function call.
-            
-            """
-            return WebHook(self,args.get("secret"),func,args.get("host","0.0.0.0"),args.get("port",2184),args.get("route","/hook"))
-
-        return predicate
 
 class AsyncAPISession:
     def __init__(self,api_token):
@@ -107,11 +86,15 @@ class AsyncAPISession:
 
 class SyncAPISession:
     def __init__(self,api_token):
+        """
+        Non-async API Session
+
+        :param api_token: An API Token for a Bot
+        """
         self.token = api_token
         self.session = Session()
 
     def _post(self,endpoint,authorize:bool=True,predef_headers:dict=None,jsondata:dict={}):
-        
             if not predef_headers:
                 headers = {
                     'User-Agent':f'Infpy/{__version_info__}',
@@ -127,6 +110,21 @@ class SyncAPISession:
             return resp.json()
 
     def postStats(self,shards:int=0,servers:int=0):
+        """
+        Post stats to IBL's API
+
+        :param shards: Shard Count
+        :param servers: Server Count 
+
+        Sample Usage:
+        
+        .. code-block:: py
+            from infinipy import SyncAPISession
+
+            cs = SyncAPISession("API_TOKEN")
+            cs.postStats(servers=12)
+        """
+            
         data = {
             'servers':servers,
             'shards':shards
