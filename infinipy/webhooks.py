@@ -1,4 +1,4 @@
-from infpy import SyncHookHTTP, hookHTTP
+from infinipy import syncHookHTTP, hookHTTP
 import asyncio
 
 class SyncWebHook(object):
