@@ -13,11 +13,11 @@ class AutoStatsUpdater:
         2 Minutes
         
         Keyword arguments:
-        :param: bot -- discord.Client | discord.ext.commands.Bot
+        :param: bot -- discord.Client | discord.ext.commands.Bot | discord.AutoShardedClient | discord.ext.commands.AutoShardedBot
         :param: api_key -- str
-        :param: interval -- int | amount of time a post takes
+        :param: interval -- int | Interval between 2 POST Requests
         
-        .. :warn: If Interval is LESS than 120, you're gonna run into a Ratelimit :|
+        .. :raises: PrecaughtHttpStatusError if interval < 120
         
         """
 
@@ -48,16 +48,19 @@ Please set the interval to 120 or more
         self.session = SyncAPISession(self.key)
         self.t = threading.Thread(target=self.__start__)
         self.interval = interval    
-
+        self.alive = True
+        
+    def stop(self): self.alive = False
+        
     def start(self):
         self.t.start()
 
     def __start__(self):
-        while True:
+        while self.alive:
             if hasattr(self.bot,'shard_count'):
                 shards = self.bot.shard_count
             else:
-                shards = 0
+                shards = 1
             self.session.postStats(shards,len(self.bot.guilds))
             print("[+] A Post was made")
             time.sleep(self.interval)
