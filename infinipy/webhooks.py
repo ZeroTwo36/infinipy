@@ -39,7 +39,8 @@ class WebHook(object):
         loop.run_until_complete(self._create_app())
         return True
     
+    def __call__(self):
+        asyncio.run(self._create_app())
     
-
     def start(self):
         asyncio.run(self._create_app())
