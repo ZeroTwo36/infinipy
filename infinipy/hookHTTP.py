@@ -15,11 +15,12 @@ async def check(webhook,func,request):
     :param webhook: Used to Pass the webhook object to the predicate function.
     :return: A function that is used as a decorator.    
     """
+    def predicate(*args, **kwargs):
+        if request.method == "POST" and request.headers.get("Authorization") == webhook.secret_key:
+            return func(*args, **kwargs)
+        return None
     
-    if request.method == "POST" and request.headers.get("Authorization") == webhook.secret_key:
-        func()
-        return True
-    return False
+    return predicate()
 
 @router.route("/", methods=['GET','POST'])
 async def index():
