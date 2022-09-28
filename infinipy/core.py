@@ -62,7 +62,7 @@ class AsyncAPISession:
         self.token = api_token
         self.session = Session()
 
-    async def _post(self,endpoint,authorize,predef_headers,jsondata):
+    async def _post(self,endpoint,authorize,predef_headers={},jsondata={}):
         async with aiohttp.ClientSession() as cs:
             if not predef_headers:
                 headers = {
@@ -76,10 +76,11 @@ class AsyncAPISession:
             resp.raise_for_status()
             return await resp.json()
 
-    async def postStats(self,shards:int=0,servers:int=0):
+    async def postStats(self,shards:int=0,servers:int=0, users: int=0):
         data = {
             'servers':servers,
-            'shards':shards
+            'shards':shards,
+            'users': users
         }
         resp = await self._post('bots/stats',jsondata=data)
         self.session['UPDATE_RESPONSE'] = resp
@@ -109,7 +110,7 @@ class SyncAPISession:
             resp.raise_for_status()
             return resp.json()
 
-    def postStats(self,shards:int=0,servers:int=0):
+    def postStats(self,shards:int=0,servers:int=0, users: int=0):
         """
         Post stats to IBL's API
 
@@ -127,7 +128,8 @@ class SyncAPISession:
             
         data = {
             'servers':servers,
-            'shards':shards
+            'shards':shards,
+            'users': users
         }
         resp = self._post('bots/stats',jsondata=data)
         self.session['UPDATE_RESPONSE'] = resp
@@ -182,7 +184,7 @@ def fetchUserSync(id):
 
     return User(id,**json)
 
-async def has_voted(user,bot_for):
+async def hasVoted(user,bot_for):
     
     async with aiohttp.ClientSession() as cs:
         resp = await cs.get(f"https://api.infinitybotlist.com/votes/{bot_for}/{user}")
